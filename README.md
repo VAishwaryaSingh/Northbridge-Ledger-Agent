@@ -6,6 +6,8 @@ A small-scale version of the kind of AI-native ledger automation product account
 
 Built against a fictional company ("Northbridge Creative", a UK digital marketing consultancy) seeded with realistic transactions and 7 deliberately planted anomalies, so the detector's accuracy could be honestly measured against a private answer key rather than just claimed.
 
+**Live demo:** https://northbridge-ledger-agent.streamlit.app/ (runs against a frozen snapshot of the seeded data, since the live Xero connection needs local credentials)
+
 ## Screenshot
 
 ![Dashboard screenshot](dashboard/screenshots/dashboard-full.png)
