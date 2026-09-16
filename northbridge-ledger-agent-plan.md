@@ -178,9 +178,6 @@ Tasks:
 
 ---
 
-
----
-
 ## 6. Suggested repo structure
 
 ```
@@ -331,4 +328,4 @@ Done:
 Blocked on:
 - Nothing.
 Next (exact resume point):
-- Phase 8 (stretch, optional) — QuickBooks connector. Check in with the owner on whether/when to pursue it.
+- Phase 8 (stretch, optional) — QuickBooks connector.
