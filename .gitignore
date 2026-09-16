@@ -1,5 +1,6 @@
 .env
 __pycache__/
 *.db
+!data/demo_ledger.db
 venv/
 data/anomaly_answer_key.csv
