@@ -2,5 +2,6 @@
 __pycache__/
 *.db
 !data/demo_ledger.db
+!data/demo_ledger_quickbooks.db
 venv/
 data/anomaly_answer_key.csv
