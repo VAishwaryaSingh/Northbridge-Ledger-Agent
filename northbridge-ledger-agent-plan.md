@@ -222,7 +222,7 @@ Note on `anomaly_answer_key.csv`: decide before publishing whether to include it
 - [x] Phase 4 — Reconciliation layer working, unmatched items correctly identified
 - [x] Phase 5 — Anomaly detection implemented + scored against answer key
 - [x] Phase 6 — Variance/explain layer + dashboard
-- [ ] Phase 7 — GitHub repo public, README complete with screenshots
+- [x] Phase 7 — GitHub repo public, README complete with screenshots
 - [ ] Phase 8 — (Stretch) QuickBooks connector added and tested
 
 ---
@@ -320,3 +320,15 @@ Blocked on:
 - Nothing.
 Next (exact resume point):
 - **Core engine (Phases 2-6) is done.** Phase 8 (QuickBooks stretch) remains.
+
+### Session 6 — 2026-09-16 — Claude Code
+Done:
+- Owner requested dropping the screen-recorded walkthrough video from scope — removed it from this plan file (Definition of Done items, Phase 7 tasks/DoD, Master Checklist, tech-stack notes). README already had no such framing.
+- **Phase 7 complete.** Rewrote `README.md`: updated status, added a "Running it" section with the actual CLI commands (`pull_data` / `reconcile` / `detect_anomalies` / `streamlit run`), added the real Phase 5 accuracy result (7/7 caught, precision 0.70, recall 1.00, with the false-positive caveat explained), and embedded a dashboard screenshot.
+- Captured the screenshot with Playwright (system-level install, headless Chromium) driving the actual running Streamlit app — **this caught a real bug**: `streamlit run dashboard/app.py` doesn't add the project root to `sys.path` the way a plain `python -c` exec test does, so `from src... import` failed with `ModuleNotFoundError` on first real run despite passing an earlier (misleading) mocked-logic test. Fixed by inserting the project root into `sys.path` at the top of `dashboard/app.py`. Re-verified with a fresh screenshot showing all 3 sections (reconciliation, anomalies, variance) rendering real data correctly. Saved to `dashboard/screenshots/dashboard-full.png`.
+- Ran a secrets scan before committing (grepped for client_id/secret/password patterns across trackable files) — clean, nothing hardcoded outside `.env` (gitignored).
+- **Created the public GitHub repo and pushed:** https://github.com/VAishwaryaSingh/northbridge-ledger-agent (first commit, all Phase 1-7 work included; `.env`, `data/ledger.db`, `data/anomaly_answer_key.csv`, and `venv/` correctly excluded via `.gitignore`).
+Blocked on:
+- Nothing.
+Next (exact resume point):
+- Phase 8 (stretch, optional) — QuickBooks connector. Check in with the owner on whether/when to pursue it.
