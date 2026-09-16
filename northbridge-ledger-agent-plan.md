@@ -356,4 +356,13 @@ Done:
 Blocked on:
 - Nothing.
 Next (exact resume point):
-- All planned phases (1-8) are complete and live. Nothing outstanding.
+- All planned phases (1-8) are complete and live.
+- **New post-Phase-8 task raised by owner:** add an "Evidence" section to the README with real Xero/QuickBooks UI screenshots, since the dashboard alone doesn't visually prove this is a live integration rather than a static/fabricated demo. Gave the owner a 10-item shot list (7 Xero, 3 QuickBooks) covering each planted/found anomaly plus a "Connected apps" screenshot as OAuth proof; paused for the owner to capture and send back screenshots (doesn't need to be all 10). **Time-sensitive:** Xero's 30-day trial (started ~2026-09-14/15) will lock the org once it lapses, so capture before then — QuickBooks sandbox is persistent, less urgent. Full shot list is saved in Claude's memory (`northbridge_evidence_shotlist.md`) in case it's needed again without re-deriving it.
+
+### Session 9 — 2026-09-16 — Claude Code
+Done:
+- Paused at the owner's request to take a break, right after being given the Evidence shot list above. Committed the pending task + full shot list to memory.
+Blocked on:
+- Waiting on owner to capture screenshots per the shot list.
+Next (exact resume point):
+- Resume by re-giving the owner the shot list (saved in memory), then build the README "Evidence" section once screenshots come back.
