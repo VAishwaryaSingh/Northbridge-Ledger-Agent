@@ -345,3 +345,15 @@ Blocked on:
 - Nothing.
 Next (exact resume point):
 - All planned phases (1-8) are now complete. Optionally: extend the Streamlit dashboard with a ledger picker (Xero/QuickBooks) if the owner wants QuickBooks visible in the live demo too — not yet done, `data/ledger_quickbooks.db` isn't committed/shipped as a demo snapshot.
+
+### Session 8 — 2026-09-16 — Claude Code
+Done:
+- Owner asked for QuickBooks to appear as its own section in the same live dashboard (not just CLI output), "so viewers can see it works on multiple ERPs." Refactored `dashboard/app.py` into reusable `render_reconciliation`/`detect_all`/`render_variance` helpers and called them twice — once against the Xero connection (sections 1-3, unchanged), once against a second QuickBooks connection (new sections 4-6) — separated by a divider and a caption explaining there's no planted-anomaly answer key on the QuickBooks side.
+- Shipped `data/demo_ledger_quickbooks.db` (frozen snapshot, `.gitignore` exception added) so the QuickBooks section works on the public deployment the same way the Xero section already does.
+- Updated README: architecture diagram now shows the QuickBooks connector/adapter path, "Running it" has the QuickBooks CLI commands, and a new "Multi-ledger proof (QuickBooks)" section explains the result. Replaced the dashboard screenshot with one showing both ERP sections.
+- Streamlit Community Cloud's auto-redeploy-on-push was unusually slow this time (~10+ minutes polling showed no change) — owner manually triggered "Reboot app" from the Streamlit Cloud dashboard, which picked up the new code within a couple of minutes. Worth trying a manual reboot first if a future push doesn't show up promptly.
+- Owner confirmed the live deployment now shows all 6 sections (Xero 1-3, QuickBooks 4-6) correctly.
+Blocked on:
+- Nothing.
+Next (exact resume point):
+- All planned phases (1-8) are complete and live. Nothing outstanding.
