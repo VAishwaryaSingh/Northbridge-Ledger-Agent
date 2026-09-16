@@ -220,7 +220,7 @@ Note on `anomaly_answer_key.csv`: decide before publishing whether to include it
 - [x] Phase 5 — Anomaly detection implemented + scored against answer key
 - [x] Phase 6 — Variance/explain layer + dashboard
 - [x] Phase 7 — GitHub repo public, README complete with screenshots
-- [ ] Phase 8 — (Stretch) QuickBooks connector added and tested
+- [x] Phase 8 — (Stretch) QuickBooks connector added and tested
 
 ---
 
@@ -331,3 +331,17 @@ Blocked on:
 - Nothing.
 Next (exact resume point):
 - Phase 8 (stretch) — QuickBooks connector. Waiting on the owner to register a developer.intuit.com app + confirm a sandbox company exists (same pattern as Xero Phase 2) before writing `src/connectors/quickbooks_connector.py`.
+
+### Session 7 — 2026-09-16 — Claude Code
+Done:
+- Owner registered the Intuit developer app and sandbox company. Hit two setup snags along the way: (1) the redirect URI kept failing "unique valid redirect URI" validation on `http://localhost:8080/qb-callback` for no obvious reason — switched to port 8000 (`http://localhost:8000/qb-callback`) and it was accepted; (2) the redirect URI field the error pointed to ("your app's keys tab") was actually a separate **Settings → Redirect URIs** page from the Keys & credentials page, and needed an explicit "Add URI" + "Save" click (not just typing into the box) to actually persist.
+- **Phase 8 complete.** Built `src/connectors/quickbooks_connector.py` (OAuth 2.0 flow mirroring the Xero connector; QBO's callback returns a `realmId` alongside `code`, the one structural OAuth difference) and confirmed a live connection to the Intuit sandbox company ("Sandbox Company US f197").
+- Rather than a full abstract `LedgerConnector` interface rewrite, built `src/connectors/quickbooks_adapter.py`: normalizes QBO's API shapes (Customer/Vendor, Purchase/Deposit, Payment/BillPayment, Item-vs-Account-coded lines) into the same Xero-shaped dicts `src/db/load.py` already expects, so the existing upsert/reconciliation/anomaly/variance code runs unchanged against QuickBooks data. Documented QBO's genuine structural differences from Xero in the adapter's docstring rather than hiding them.
+- Loaded a second local database, `data/ledger_quickbooks.db`, via an extended `src/pull_data_quickbooks.py`. Caught and fixed a real bug while doing this: QBO line-item `Id` values (1, 2, 3...) are only unique *within* their own transaction, not globally, so using them directly as the shared `line_items` table's primary key caused massive collisions across different invoices (76 real line items collapsed to 5). Fixed by always prefixing with the parent transaction's ID.
+- Added a `--db` flag to `src/reconcile.py` and `src/detect_anomalies.py` (plus `--no-score` on the latter, since there's no planted-anomaly answer key for the QuickBooks sandbox) so the *same* scripts run against either ledger.
+- **Ran all three engine phases against real QuickBooks sandbox data:** reconciliation (40 standalone Purchase/Deposit transactions, 0% auto-matched — an honest, explainable result: this sandbox's data mostly uses direct Purchase entries rather than Bill+Payment pairs, unlike Northbridge's Xero data), anomaly detection (found 2 *real, unplanted* coincidences in Intuit's own canned data — a genuine duplicate-looking invoice pattern for "Sushi by Katsuyuki" and a bill dated on a Sunday for "Robertson & Associates" — plus the 40 unmatched-line flags), and variance explanation (July→August movement, e.g. "Miscellaneous up 1806%... driven by Brosnahan Insurance Agency and Cool Cars").
+- Deliberately did not seed planted anomalies + a QuickBooks-specific answer key (the plan's own Phase 8 notes flag this as disproportionate effort for a stretch goal) — the QuickBooks result demonstrates the engine is ledger-agnostic using real sandbox data as-is, not a scored accuracy claim.
+Blocked on:
+- Nothing.
+Next (exact resume point):
+- All planned phases (1-8) are now complete. Optionally: extend the Streamlit dashboard with a ledger picker (Xero/QuickBooks) if the owner wants QuickBooks visible in the live demo too — not yet done, `data/ledger_quickbooks.db` isn't committed/shipped as a demo snapshot.
