@@ -1,11 +1,16 @@
 """Phase 5 entrypoint: run every anomaly check against the local database and
 score the combined output against the private answer key.
 
-Run with: python -m src.detect_anomalies
+Run with: python -m src.detect_anomalies [--db data/ledger_quickbooks.db] [--no-score]
+
+--no-score skips answer-key scoring and just prints raw detector output —
+use this for a database with no planted-anomaly answer key (e.g. the
+QuickBooks sandbox, which has real but unplanted data).
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sqlite3
 
@@ -41,7 +46,12 @@ def _unmatched_bank_lines_as_a6(conn: sqlite3.Connection) -> list[dict]:
 
 
 def main() -> None:
-    conn = sqlite3.connect(DB_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--db", default=DB_PATH, help="Path to the ledger database (default: %(default)s)")
+    parser.add_argument("--no-score", action="store_true", help="Skip answer-key scoring; just print raw output")
+    args = parser.parse_args()
+
+    conn = sqlite3.connect(args.db)
 
     detected = (
         find_duplicate_invoices(conn)
@@ -57,6 +67,9 @@ def main() -> None:
     print(f"Detector flagged {len(detected)} item(s) total:\n")
     for item in detected:
         print(f"  [{item['target_anomaly_id']}] {item['reason']}")
+
+    if args.no_score:
+        return
 
     score = score_against_answer_key(detected, ANSWER_KEY_PATH)
     print(f"\n{'=' * 60}\nScore: caught {score['caught']} of {score['total_planted_anomalies']} "

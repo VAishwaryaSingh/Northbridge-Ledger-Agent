@@ -1,10 +1,11 @@
 """Phase 4 entrypoint: run reconciliation against the local database and print a report.
 
-Run with: python -m src.reconcile
+Run with: python -m src.reconcile [--db data/ledger_quickbooks.db]
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sqlite3
 
@@ -13,7 +14,11 @@ from src.reconciliation.matcher import build_reconciliation_report, match_bank_t
 
 
 def main() -> None:
-    conn = sqlite3.connect(DB_PATH)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--db", default=DB_PATH, help="Path to the ledger database (default: %(default)s)")
+    args = parser.parse_args()
+
+    conn = sqlite3.connect(args.db)
     matches = match_bank_transactions(conn)
     report = build_reconciliation_report(matches)
     conn.close()
