@@ -366,3 +366,13 @@ Blocked on:
 - Waiting on owner to capture screenshots per the shot list.
 Next (exact resume point):
 - Resume by re-giving the owner the shot list (saved in memory), then build the README "Evidence" section once screenshots come back.
+
+### Session 10 — 2026-09-18 — Claude Code
+Done:
+- Owner captured and delivered 10 of 10 requested screenshots (all 7 Xero anomalies + 3 QuickBooks) via a local `Screenshots Evidence/` folder in the repo. One substitution: the owner's Xero shot shows the "My Xero" organisation list page (proving a real, live "In Trial" org) rather than Settings → Connected apps specifically — captioned honestly as live-org proof rather than claiming it shows the OAuth app connection.
+- Copied all 10 into `dashboard/screenshots/` with descriptive names (`evidence-xero-a1-duplicate-invoice.png`, etc.) and added a new `## Evidence` section to `README.md` (between Screenshot and Architecture), grouped into Xero/QuickBooks subsections, each image paired with a one-line caption naming the specific anomaly/finding it proves.
+- **README now visually ties every dashboard finding back to a real ledger entry.** Local `Screenshots Evidence/` source folder left in place (not committed — the copies in `dashboard/screenshots/` are the ones referenced by the README).
+Blocked on:
+- Nothing.
+Next:
+- None planned — all 8 phases plus the Evidence section are complete. Owner should let the Xero trial lapse or upgrade at their discretion; no further Xero API pulls are needed since the demo runs off frozen snapshots.

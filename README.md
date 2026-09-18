@@ -12,6 +12,47 @@ Built against a fictional company ("Northbridge Creative", a UK digital marketin
 
 ![Dashboard screenshot](dashboard/screenshots/dashboard-full.png)
 
+## Evidence
+
+Screenshots from the live Xero trial org and QuickBooks sandbox, showing the anomalies above are real entries in real ledgers, not fabricated for the dashboard.
+
+### Xero
+
+![Live trial org](dashboard/screenshots/evidence-xero-live-org.png)
+NorthBridge Creative Ltd. — a real Xero trial org ("In Trial"), logged in as the account owner.
+
+![A1 duplicate invoice](dashboard/screenshots/evidence-xero-a1-duplicate-invoice.png)
+A1 — Bramwell Dental Practice invoiced £1,440 twice: INV-0008 (1 Jul 2026) and INV-0009 (4 Jul 2026), same amount, same retainer.
+
+![A2 VAT mismatch](dashboard/screenshots/evidence-xero-a2-vat-mismatch.png)
+A2 — Meridian SaaS (Ireland) August bill coded with 20% UK VAT, despite Meridian being a foreign supplier.
+
+![A3 threshold-adjacent amount](dashboard/screenshots/evidence-xero-a3-threshold-amount.png)
+A3 — M. Andersson Copywriting's £499 August bill, just under a round threshold.
+
+![A4 weekend posting](dashboard/screenshots/evidence-xero-a4-weekend-posting.png)
+A4 — Staples Business Supplies bill dated Saturday 1 Aug 2026.
+
+![A5 duplicate payment](dashboard/screenshots/evidence-xero-a5-duplicate-payment.png)
+A5 — two £1,140 Regus Manchester payments in the bank feed, both unreconciled, one explicitly labeled "Duplicate payment."
+
+![A6 unreconciled transaction](dashboard/screenshots/evidence-xero-a6-unreconciled.png)
+A6 — an £85.40 Amazon Business spend, unreconciled.
+
+![A7 statistical outlier](dashboard/screenshots/evidence-xero-a7-statistical-outlier.png)
+A7 — a £1,850 Staples "office furniture and equipment" bill, well outside the normal spend pattern.
+
+### QuickBooks
+
+![Sandbox company header](dashboard/screenshots/evidence-qb-sandbox-header.png)
+Sandbox Company US f197 — the same company name the connector pulls via the API.
+
+![Duplicate invoice pattern](dashboard/screenshots/evidence-qb-sushi-duplicate-invoices.png)
+Sushi by Katsuyuki billed $80 three times in August (5th, 12th, 19th) — the suspicious repeating pattern the detector flags.
+
+![Sunday-dated bill](dashboard/screenshots/evidence-qb-robertson-sunday-bill.png)
+Robertson & Associates bill dated Sunday 19 Apr 2026.
+
 ## Architecture
 
 ```mermaid
