@@ -132,29 +132,44 @@ def get_organisation(access_token: str, tenant_id: str) -> dict:
     return _get("Organisation", access_token, tenant_id)
 
 
+MAX_PAGES = 500  # safety stop; at 100 rows per page that's 50,000 records
+
+
+def _get_all_pages(endpoint: str, key: str, access_token: str, tenant_id: str, params: dict | None = None) -> list[dict]:
+    """Fetch every page of a list endpoint (page=1, 2, ...) until a page comes back empty.
+
+    Xero returns up to 100 records per page, so a single call silently truncates larger orgs.
+    Stopping on an empty page (rather than "fewer than 100") is correct whatever page size Xero uses.
+    """
+    records: list[dict] = []
+    for page in range(1, MAX_PAGES + 1):
+        data = _get(endpoint, access_token, tenant_id, params={**(params or {}), "page": page})
+        batch = data.get(key, [])
+        if not batch:
+            break
+        records.extend(batch)
+    return records
+
+
 def get_invoices(access_token: str, tenant_id: str) -> list[dict]:
-    # SummaryOnly=false (case-sensitive) only actually takes effect when a "page"
-    # param is also present — without it, Xero silently ignores SummaryOnly and
-    # still omits LineItems. Our volumes are small (<100), so a single page 1 covers it.
-    data = _get(
-        "Invoices", access_token, tenant_id,
-        params={"where": 'Type=="ACCREC"', "SummaryOnly": "false", "page": 1},
+    # SummaryOnly=false (case-sensitive) only takes effect when a "page" param is present —
+    # without it, Xero silently ignores SummaryOnly and still omits LineItems.
+    return _get_all_pages(
+        "Invoices", "Invoices", access_token, tenant_id,
+        params={"where": 'Type=="ACCREC"', "SummaryOnly": "false"},
     )
-    return data.get("Invoices", [])
 
 
 def get_bills(access_token: str, tenant_id: str) -> list[dict]:
     """Bills are Xero's ACCPAY invoice type — same endpoint as invoices, filtered by type."""
-    data = _get(
-        "Invoices", access_token, tenant_id,
-        params={"where": 'Type=="ACCPAY"', "SummaryOnly": "false", "page": 1},
+    return _get_all_pages(
+        "Invoices", "Invoices", access_token, tenant_id,
+        params={"where": 'Type=="ACCPAY"', "SummaryOnly": "false"},
     )
-    return data.get("Invoices", [])
 
 
 def get_bank_transactions(access_token: str, tenant_id: str) -> list[dict]:
-    data = _get("BankTransactions", access_token, tenant_id)
-    return data.get("BankTransactions", [])
+    return _get_all_pages("BankTransactions", "BankTransactions", access_token, tenant_id)
 
 
 def get_accounts(access_token: str, tenant_id: str) -> list[dict]:
@@ -163,15 +178,13 @@ def get_accounts(access_token: str, tenant_id: str) -> list[dict]:
 
 
 def get_contacts(access_token: str, tenant_id: str) -> list[dict]:
-    data = _get("Contacts", access_token, tenant_id)
-    return data.get("Contacts", [])
+    return _get_all_pages("Contacts", "Contacts", access_token, tenant_id)
 
 
 def get_payments(access_token: str, tenant_id: str) -> list[dict]:
     """Payments recorded directly against invoices/bills (e.g. via 'Add Payment') —
     separate from BankTransactions, which only covers Spend/Receive Money lines."""
-    data = _get("Payments", access_token, tenant_id)
-    return data.get("Payments", [])
+    return _get_all_pages("Payments", "Payments", access_token, tenant_id)
 
 
 def save_tokens(refresh_token: str, tenant_id: str) -> None:

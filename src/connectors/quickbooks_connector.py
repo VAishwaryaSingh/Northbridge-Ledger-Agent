@@ -98,20 +98,33 @@ def refresh_access_token(refresh_token: str) -> dict:
     return response.json()
 
 
+QBO_PAGE_SIZE = 1000  # QBO's maximum MAXRESULTS
+
+
 def _query(entity: str, access_token: str, realm_id: str) -> list[dict]:
-    """Run a `SELECT * FROM <entity>` query and return the entity's own list under
-    the response's QueryResponse key (QBO's query API shape)."""
-    response = requests.get(
-        f"{API_BASE}/{realm_id}/query",
-        headers={
-            "Authorization": f"Bearer {access_token}",
-            "Accept": "application/json",
-        },
-        params={"query": f"SELECT * FROM {entity} MAXRESULTS 1000", "minorversion": MINOR_VERSION},
-        timeout=30,
-    )
-    response.raise_for_status()
-    return response.json().get("QueryResponse", {}).get(entity, [])
+    """Run a `SELECT * FROM <entity>` query, following STARTPOSITION until a short page, and return
+    the entity's own list under the response's QueryResponse key (QBO's query API shape)."""
+    records: list[dict] = []
+    start = 1
+    while True:
+        response = requests.get(
+            f"{API_BASE}/{realm_id}/query",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Accept": "application/json",
+            },
+            params={
+                "query": f"SELECT * FROM {entity} STARTPOSITION {start} MAXRESULTS {QBO_PAGE_SIZE}",
+                "minorversion": MINOR_VERSION,
+            },
+            timeout=30,
+        )
+        response.raise_for_status()
+        batch = response.json().get("QueryResponse", {}).get(entity, [])
+        records.extend(batch)
+        if len(batch) < QBO_PAGE_SIZE:
+            return records
+        start += QBO_PAGE_SIZE
 
 
 def get_company_info(access_token: str, realm_id: str) -> dict:

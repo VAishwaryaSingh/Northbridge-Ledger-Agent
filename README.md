@@ -93,6 +93,16 @@ python -m src.detect_anomalies --db data/ledger_quickbooks.db --no-score   # no 
 
 See `northbridge-ledger-agent-plan.md` for the full phase-by-phase build plan and session log.
 
+## Scale test (synthetic, 5,000 bank transactions)
+
+The live sandboxes are small (Xero: 5 standalone bank lines plus 46 invoice payments; QuickBooks: 40 bank lines plus 26 payments), so the dashboard also has a **synthetic** dataset to show how the engine behaves at scale. `python -m src.seed_synthetic` generates it (seeded, reproducible) into `data/demo_ledger_large.db`, using the same schema as the live pulls, with anomalies A1-A7 planted at known rates (`data/synthetic_planted.csv`).
+
+- Reconciliation plus all anomaly checks over 5,000 bank transactions run in about half a second; the dashboard shows a progress bar for each stage.
+- Result on the synthetic set: 84 of 84 planted anomalies caught, 24 false positives (8 monthly bank-fee lines that never have a bill, 16 statistical-outlier flags), precision 0.778.
+- **Caveat:** the planted patterns were written to fit the rules, so this demonstrates scale and mechanics, not accuracy on real-world books. The measured accuracy result is the live Xero one below.
+- The "Data coverage" table on the dashboard explains why "bank transactions" alone understates activity: Xero and QuickBooks record invoice payments in a separate table from standalone bank lines.
+- Xero and QuickBooks pulls now paginate (previously Xero invoices/bills stopped at 100 each and QuickBooks queries at 1,000 rows). Tested against mocked responses only, not re-run against the live APIs.
+
 ## Accuracy result
 
 Running the full detector (5 rule-based checks + 1 statistical outlier check + reconciliation's unmatched-item detection) against the seeded dataset and scoring it against the private, deliberately-planted answer key (`data/anomaly_answer_key.csv`, not published in this repo):

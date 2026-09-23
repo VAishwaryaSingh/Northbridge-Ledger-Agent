@@ -11,6 +11,7 @@ carry a direct invoice_id link, so there's nothing to reconcile for those.
 from __future__ import annotations
 
 import sqlite3
+from collections import defaultdict
 from datetime import datetime
 
 AMOUNT_TOLERANCE_ABS = 5.0    # flat tolerance in GBP for a "probable" match
@@ -42,8 +43,13 @@ def _amounts_close(a: float, b: float, tolerance_abs: float) -> bool:
     return abs(a - b) <= max(tolerance_abs, abs(b) * AMOUNT_TOLERANCE_PCT)
 
 
-def match_bank_transactions(conn: sqlite3.Connection) -> list[dict]:
-    """Return one classification record per bank transaction."""
+def match_bank_transactions(conn: sqlite3.Connection, progress=None) -> list[dict]:
+    """Return one classification record per bank transaction.
+
+    Invoices are loaded once and grouped by (contact, type), so cost scales with the
+    number of transactions rather than issuing one query per transaction.
+    `progress`, if given, is called as progress(done, total) every 250 transactions.
+    """
     transactions = conn.execute(
         """SELECT bt.bank_transaction_id, bt.contact_id, bt.date, bt.total, bt.type,
                   c.name AS contact_name
@@ -51,27 +57,26 @@ def match_bank_transactions(conn: sqlite3.Connection) -> list[dict]:
            LEFT JOIN contacts c ON c.contact_id = bt.contact_id"""
     ).fetchall()
 
+    candidates_by_key: dict[tuple, list[tuple]] = defaultdict(list)
+    for inv_id, contact_id, inv_type, inv_date, due_date, inv_total in conn.execute(
+        "SELECT invoice_id, contact_id, invoice_type, invoice_date, due_date, total FROM invoices"
+    ):
+        candidates_by_key[(contact_id, inv_type)].append(
+            (inv_id, _parse_date(inv_date), _parse_date(due_date), inv_total)
+        )
+
     results = []
-    for bt_id, contact_id, bt_date, total, bt_type, contact_name in transactions:
+    total_rows = len(transactions)
+    for n, (bt_id, contact_id, bt_date, total, bt_type, contact_name) in enumerate(transactions, start=1):
         bt_dt = _parse_date(bt_date)
         expected_invoice_type = "ACCPAY" if bt_type == "SPEND" else "ACCREC"
-
-        candidates = (
-            conn.execute(
-                """SELECT invoice_id, invoice_date, due_date, total
-                   FROM invoices
-                   WHERE contact_id = ? AND invoice_type = ?""",
-                (contact_id, expected_invoice_type),
-            ).fetchall()
-            if contact_id
-            else []
-        )
+        candidates = candidates_by_key.get((contact_id, expected_invoice_type), []) if contact_id else []
 
         best_match_id = None
         best_status = "no_match"
 
-        for inv_id, inv_date, due_date, inv_total in candidates:
-            day_diff = _closest_day_diff(bt_dt, _parse_date(inv_date), _parse_date(due_date))
+        for inv_id, inv_dt, due_dt, inv_total in candidates:
+            day_diff = _closest_day_diff(bt_dt, inv_dt, due_dt)
             if day_diff is None:
                 continue
 
@@ -96,6 +101,8 @@ def match_bank_transactions(conn: sqlite3.Connection) -> list[dict]:
                 "matched_invoice_id": best_match_id,
             }
         )
+        if progress and (n % 250 == 0 or n == total_rows):
+            progress(n, total_rows)
 
     return results
 

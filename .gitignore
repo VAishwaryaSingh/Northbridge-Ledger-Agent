@@ -3,6 +3,7 @@ __pycache__/
 *.db
 !data/demo_ledger.db
 !data/demo_ledger_quickbooks.db
+!data/demo_ledger_large.db
 venv/
 data/anomaly_answer_key.csv
 Screenshots Evidence/

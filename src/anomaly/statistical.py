@@ -155,3 +155,38 @@ def score_against_answer_key(detected: list[dict], answer_key_path: str) -> dict
         "precision": round(caught / (caught + fp_count), 3) if (caught + fp_count) else None,
         "recall": round(caught / total, 3) if total else None,
     }
+
+
+def score_against_planted_records(detected: list[dict], planted_path: str) -> dict:
+    """Score detector output against a planted-record list (synthetic dataset).
+
+    Unlike `score_against_answer_key` (which matches on contact name), this matches on the exact
+    record ID, because the synthetic set plants many anomalies per contact. A detection counts as
+    caught only if its rule ID *and* record ID both match a planted anomaly; every other flag is
+    a false positive.
+    """
+    with open(planted_path, newline="") as f:
+        planted = list(csv.DictReader(f))
+
+    planted_keys = {(p["id"], p["record_id"]) for p in planted}
+    detected_keys = {(d["target_anomaly_id"], d["record_id"]) for d in detected}
+
+    caught_keys = planted_keys & detected_keys
+    false_positive_keys = detected_keys - planted_keys
+
+    by_type = {}
+    for anomaly_id in sorted({p["id"] for p in planted}):
+        total = sum(1 for k in planted_keys if k[0] == anomaly_id)
+        caught = sum(1 for k in caught_keys if k[0] == anomaly_id)
+        fps = sum(1 for k in false_positive_keys if k[0] == anomaly_id)
+        by_type[anomaly_id] = {"planted": total, "caught": caught, "false_positives": fps}
+
+    total, caught, fp_count = len(planted_keys), len(caught_keys), len(false_positive_keys)
+    return {
+        "total_planted_anomalies": total,
+        "caught": caught,
+        "false_positive_count": fp_count,
+        "precision": round(caught / (caught + fp_count), 3) if (caught + fp_count) else None,
+        "recall": round(caught / total, 3) if total else None,
+        "by_type": by_type,
+    }

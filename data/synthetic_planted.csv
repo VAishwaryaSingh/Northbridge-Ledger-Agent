@@ -1,0 +1,85 @@
+id,record_id,contact,description
+A1,66c4c628-9908-36b0-ef7d-c45a6ebe64f2,Retainer Client 04,Duplicate retainer invoice £1303.88
+A1,4e6466f4-d7e0-a041-ee23-d837443100e0,Retainer Client 07,Duplicate retainer invoice £1344.31
+A1,ba478d78-9773-811e-9812-fc62f490119a,Retainer Client 05,Duplicate retainer invoice £2800.15
+A1,659a5d0c-3056-b473-83e4-4f132959e5c1,Retainer Client 07,Duplicate retainer invoice £1344.31
+A1,07b4625e-8da6-2b23-f2e9-1bc6a03631ad,Retainer Client 02,Duplicate retainer invoice £1960.09
+A1,2cc3602e-7d46-3473-8a78-980fd5f20495,Retainer Client 05,Duplicate retainer invoice £2800.15
+A1,ba963dfa-3068-7b1b-ba17-d5bd8b2534bb,Retainer Client 03,Duplicate retainer invoice £1778.03
+A1,5a971a73-cf6f-ede6-0778-07a5b1dbd7a7,Retainer Client 01,Duplicate retainer invoice £1297.54
+A1,d37bd618-e2dc-9154-728a-a7315768de82,Retainer Client 07,Duplicate retainer invoice £1344.31
+A1,68725a65-1f82-decc-aac2-08036dc731c6,Retainer Client 02,Duplicate retainer invoice £1960.09
+A1,94e20f15-11e2-c479-6dfb-cd94d24ba9a9,Retainer Client 03,Duplicate retainer invoice £1778.03
+A1,ba7240a2-c4b4-8249-d3ff-7812f141f667,Retainer Client 04,Duplicate retainer invoice £1303.88
+A2,ceb6da79-3c4d-58c5-092b-78235aabaad3,Supplier 14,"Coded INPUT2, normally ZERORATEDINPUT"
+A2,3944e152-6348-1e5a-105f-17c54b14469d,Supplier 09,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,393b6c77-e94c-eced-ec58-849fdb7654cd,Supplier 02,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,f4443e01-0140-be56-a9e1-2344e364df61,Supplier 20,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,17be5699-c9a0-b272-ba44-abaae646af78,Supplier 11,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,8ee1b7a6-da66-b7b1-1e27-fdde1b09a44c,Supplier 19,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,74106831-27b0-1967-0530-d20412fe89f7,Supplier 01,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,ff92e420-75b2-4f97-43e7-39bd16698f09,Supplier 13,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,3e42cd57-23fd-a432-6082-2bfa5534184c,Supplier 06,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,f769e23c-b533-16bb-e9b9-2baabda9a5bf,Supplier 18,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,a4a7696c-ca85-b6e0-42d7-c266328ddd5a,Supplier 15,"Coded ZERORATEDINPUT, normally INPUT2"
+A2,4239a861-52fe-db98-9c49-2c5827d49c69,Supplier 05,"Coded ZERORATEDINPUT, normally INPUT2"
+A3,aae8de7f-6192-ac1e-195e-411674d084c6,Supplier 15,Bill of exactly £499
+A3,2d35641a-a6f5-3bec-ff5e-8fc148d01517,Supplier 08,Bill of exactly £499
+A3,2030be57-e8a9-25c0-1ef1-8041fb55ef2d,Supplier 18,Bill of exactly £499
+A3,c08467c0-030e-e132-49c2-975e97cd252b,Supplier 04,Bill of exactly £499
+A3,a9edb476-7cf4-437e-0d33-1e35225b0887,Supplier 17,Bill of exactly £499
+A3,1904350c-4ac3-c0af-a816-4418bbd9462b,Supplier 16,Bill of exactly £499
+A3,7359729d-3c85-1bd6-a6bd-d8b86ae81fc2,Supplier 01,Bill of exactly £499
+A3,a8dc711d-a3e6-f29d-3c56-da5bb0b5b341,Supplier 13,Bill of exactly £499
+A3,4156e961-14c1-469a-5e0c-7d6ab4309ba8,Supplier 20,Bill of exactly £499
+A3,6d926283-4343-0652-bdfa-6b7959fd7782,Supplier 12,Bill of exactly £499
+A4,8b481014-18b9-335b-4c2b-780a19ea2e27,Supplier 18,Bill dated Saturday 2026-05-23
+A4,66d0238e-cd8c-8ba9-9afd-f252ff5065a5,Supplier 10,Bill dated Saturday 2026-03-21
+A4,505b9a66-dbcf-a9c4-98f7-cf1545aaa872,Supplier 15,Bill dated Sunday 2026-04-05
+A4,2912972a-1105-f190-c356-bb2be0bb4e83,Supplier 13,Bill dated Sunday 2026-04-05
+A4,e1df8da4-06bb-6111-9cc4-444d2dc22505,Supplier 17,Bill dated Sunday 2026-06-28
+A4,2f7a0b07-c6ea-a830-22fe-f6c27581dc55,Supplier 01,Bill dated Saturday 2026-02-07
+A4,232e99a8-ec96-a732-848f-0ea106420aa2,Supplier 20,Bill dated Saturday 2026-03-07
+A4,3d4c90e4-b71a-0cd7-ab5f-ce761c42230f,Supplier 19,Bill dated Saturday 2026-05-02
+A4,7e36c219-50bc-e3f8-39d4-481d74fb637a,Supplier 08,Bill dated Sunday 2026-01-11
+A4,7f53e535-93ef-c78e-4109-ede37762d029,Supplier 05,Bill dated Sunday 2026-01-18
+A4,519bef71-8894-469d-5228-f6b129be2c5e,Supplier 16,Bill dated Saturday 2026-04-04
+A4,4aa0953a-f82c-4c7b-1af9-e16e452f4fa8,Supplier 14,Bill dated Sunday 2026-03-29
+A4,4972fb40-e3d0-76de-208d-3d097e3a313a,Supplier 02,Bill dated Sunday 2026-03-15
+A4,d9e229a1-6d1a-9231-0857-1c34bb099b5b,Supplier 06,Bill dated Saturday 2026-05-23
+A4,bf181efa-5cdf-d73e-277a-2e54bcf56c9e,Supplier 12,Bill dated Sunday 2026-08-30
+A5,f506bb13-5b00-b3cf-f4d3-3ca5538ef58e,Recurring Supplier 10,Second payment of £101.62 against an already-paid bill
+A5,de304e91-0041-7c4d-8bb9-73d98778690f,Recurring Supplier 07,Second payment of £343.14 against an already-paid bill
+A5,8544dc28-56fa-5b6f-92a3-ccd233bb72cd,Recurring Supplier 10,Second payment of £92.33 against an already-paid bill
+A5,01ba35c8-58e2-a599-4584-4eaa5512dcb8,Recurring Supplier 04,Second payment of £297.29 against an already-paid bill
+A5,a90b1ddd-b4dd-2c13-e5a2-4a6c52144d02,Recurring Supplier 04,Second payment of £303.54 against an already-paid bill
+A5,9a61f1e0-ea09-3048-f80f-749b2e4eee1f,Recurring Supplier 08,Second payment of £215.33 against an already-paid bill
+A5,0bc11008-7b8e-858f-3d2a-ad69580f4214,Recurring Supplier 06,Second payment of £177.12 against an already-paid bill
+A5,809ade2d-b9b9-2721-6931-7b55795f697d,Recurring Supplier 08,Second payment of £195.44 against an already-paid bill
+A5,f27a3f66-5aa6-382c-8d82-c1a69bb692ee,Recurring Supplier 01,Second payment of £449.99 against an already-paid bill
+A5,50166dd4-e8eb-7312-3c44-121e8c629e8f,Recurring Supplier 02,Second payment of £114.23 against an already-paid bill
+A6,5cc60da5-7531-3f37-2ea8-680d07b89fd2,One-off Payee 01,Bank line £671.62 with no matching invoice/bill
+A6,0543fc4b-56ed-8592-96e8-1057eb383807,One-off Payee 02,Bank line £512.38 with no matching invoice/bill
+A6,0761409f-1f8b-88da-1a45-2e25e056511f,One-off Payee 03,Bank line £549.47 with no matching invoice/bill
+A6,6392bcba-49a7-a1b1-a1a2-bd10c75d8736,One-off Payee 04,Bank line £234.20 with no matching invoice/bill
+A6,6fe0ada3-dded-1786-692a-d3b16c48c9f8,One-off Payee 05,Bank line £1385.35 with no matching invoice/bill
+A6,731a9d05-7e33-a416-52bf-d4d2be104b91,One-off Payee 06,Bank line £1452.35 with no matching invoice/bill
+A6,2fa8e2a7-ffea-7059-6a90-c22a312ae3e7,One-off Payee 07,Bank line £1247.08 with no matching invoice/bill
+A6,130c7a15-afa4-71a6-27d0-b36fb2b3eef2,One-off Payee 08,Bank line £1133.96 with no matching invoice/bill
+A6,f7808543-f782-35d3-ba0c-7d51edbb9ff5,One-off Payee 09,Bank line £1390.09 with no matching invoice/bill
+A6,d25f925e-c8c7-d9b8-99f4-eb9f8f1c9563,One-off Payee 10,Bank line £871.48 with no matching invoice/bill
+A6,dcb9c25b-6a93-7f4e-ecd2-e829b18ea9e8,One-off Payee 11,Bank line £701.24 with no matching invoice/bill
+A6,5208908e-6efc-95c4-16a2-be65f029b6e6,One-off Payee 12,Bank line £242.22 with no matching invoice/bill
+A6,9b3aae1b-4b1c-f2c7-c9da-7c6a23e8ac40,One-off Payee 13,Bank line £1169.97 with no matching invoice/bill
+A6,6069065c-4787-1062-3aef-0d15988e9651,One-off Payee 14,Bank line £1451.98 with no matching invoice/bill
+A6,510a067f-97b0-c8c1-3f86-010448295d57,One-off Payee 15,Bank line £1260.55 with no matching invoice/bill
+A7,34583555-0907-b93b-0488-d6eadd864484,Supplier 06,Line of £1361.83 vs typical £140
+A7,22bceacf-9bba-ab78-b873-5f57e9b01de4,Supplier 12,Line of £2970.18 vs typical £260
+A7,7dbf5a4a-1c49-36c7-d85c-32960f7fa027,Supplier 17,Line of £4089.95 vs typical £380
+A7,8b3c3393-a03e-18d8-185c-3e86587a11ad,Supplier 01,Line of £3634.25 vs typical £380
+A7,dedd3b3a-ef85-866b-607c-906cecceb989,Supplier 03,Line of £2296.27 vs typical £210
+A7,7e95f4bd-6972-3504-3a03-001a4e40efe6,Supplier 14,Line of £1046.87 vs typical £140
+A7,04101a5f-1639-f7ca-16fc-aa91b2f64095,Supplier 20,Line of £2845.19 vs typical £260
+A7,1a649322-9e30-3781-4689-6020e4becbea,Supplier 13,Line of £3415.69 vs typical £320
+A7,97b7477b-86ac-bca2-ff53-55b8f411fc63,Supplier 04,Line of £2485.03 vs typical £260
+A7,36fcedfd-be9e-3c56-56ba-00647ddd3856,Supplier 11,Line of £2477.64 vs typical £210
