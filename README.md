@@ -4,6 +4,8 @@
 
 A small-scale version of the kind of AI-native ledger automation product accounting firms are increasingly adopting: connects to a live Xero (and QuickBooks Online) organisation via OAuth, reconciles bank transactions against invoices/bills, flags anomalies (duplicates, VAT miscodings, threshold-adjacent amounts, weekend postings, duplicate payments, statistical outliers), and explains period-over-period variance in plain English.
 
+**How it works, plainly:** it is rules-based. The checks are deterministic rules plus a statistical outlier test (median/MAD), and the variance sentences are templates. It does not call an LLM or any AI model. It is a demonstration on fictional and sandbox data, not production software, and a person needs to review every flag it raises.
+
 Built against a fictional company ("Northbridge Creative", a UK digital marketing consultancy) seeded with realistic Xero transactions and 7 deliberately planted anomalies, so the detector's accuracy could be honestly measured against a private answer key rather than just claimed. The same engine also runs, unmodified, against a real QuickBooks Online sandbox — proving it's ledger-agnostic, not a Xero-only script.
 
 **Live demo:** https://northbridge-ledger-agent.streamlit.app/ (runs against a frozen snapshot of the seeded data, since the live Xero connection needs local credentials)
@@ -102,6 +104,19 @@ The live sandboxes are small (Xero: 5 standalone bank lines plus 46 invoice paym
 - **Caveat:** the planted patterns were written to fit the rules, so this demonstrates scale and mechanics, not accuracy on real-world books. The measured accuracy result is the live Xero one below.
 - The "Data coverage" table on the dashboard explains why "bank transactions" alone understates activity: Xero and QuickBooks record invoice payments in a separate table from standalone bank lines.
 - Xero and QuickBooks pulls now paginate (previously Xero invoices/bills stopped at 100 each and QuickBooks queries at 1,000 rows). Tested against mocked responses only, not re-run against the live APIs.
+
+## Match tiers and review trail
+
+Each bank line is classified once, and each invoice can be claimed by only one bank line:
+
+- **exact_match**: amount within a penny, date within 30 days. The only tier treated as auto-cleared.
+- **probable_match**: within £5 / 2%. Goes to the review queue, never auto-cleared.
+- **duplicate_claim**: would match, but the invoice is already taken by another bank line.
+- **no_match**: nothing plausible (raises A6).
+
+Flags are kept in an exceptions register (`src/exceptions/register.py`, shown in the dashboard under "Exceptions register & close review"). Each exception has a severity (blocks close or warns), the evidence needed to clear it, and clearing it requires a named reviewer, a reason code and an evidence note. Re-syncing a period never duplicates or resets an item, and anything uncleared carries into later periods with its age. Severity defaults are starting points to agree with whoever owns the close, not accounting policy.
+
+Not covered yet: there is no bank statement import, so there is no book-to-bank tie-out. "Unmatched" means no invoice sits behind a ledger entry, not that a statement line is unreconciled. Tests: `python -m unittest discover -s tests -t .`
 
 ## Accuracy result
 

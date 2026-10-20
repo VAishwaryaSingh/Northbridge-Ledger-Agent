@@ -17,6 +17,7 @@ import streamlit as st
 
 from src.anomaly.statistical import score_against_answer_key, score_against_planted_records
 from src.db.load import DB_PATH
+from src.exceptions import register
 from src.reconciliation.matcher import build_reconciliation_report, match_bank_transactions
 from src.pipeline import detect_all
 from src.reconciliation.stats import compute_data_stats
@@ -72,10 +73,14 @@ def render_reconciliation(conn: sqlite3.Connection, heading: str, progress=None)
     st.header(heading)
     recon_report = build_reconciliation_report(match_bank_transactions(conn, progress=progress))
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     col1.metric("Bank transactions", recon_report["total_bank_transactions"], help="Standalone bank lines only; see Data coverage above")
-    col2.metric("Auto-matched", f"{recon_report['pct_auto_matched']}%")
-    col3.metric("Unmatched", recon_report["unmatched_count"])
+    col2.metric("Auto-cleared (exact)", f"{recon_report['pct_auto_matched']}%", help="Amount within a penny and date within 30 days; each invoice claimed once")
+    col3.metric("Needs review", recon_report["probable_matches"] + recon_report["duplicate_claims"], help="Probable matches and bank lines claiming an already-matched invoice; never auto-cleared")
+    col4.metric("Unmatched", recon_report["unmatched_count"])
+    if recon_report["review_items"]:
+        st.caption("Needs review: not cleared until a reviewer confirms (see Exceptions register & close review).")
+        st.dataframe(recon_report["review_items"], use_container_width=True)
     if recon_report["unmatched_items"]:
         st.dataframe(recon_report["unmatched_items"], use_container_width=True)
     return recon_report
@@ -125,9 +130,95 @@ st.caption(
 
 view = st.radio(
     "Dataset",
-    ["Live sandboxes (Xero + QuickBooks)", "Synthetic scale test (5,000 bank transactions)"],
+    [
+        "Live sandboxes (Xero + QuickBooks)",
+        "Synthetic scale test (5,000 bank transactions)",
+        "Exceptions register & close review",
+    ],
     horizontal=True,
 )
+
+
+def render_close_review() -> None:
+    """What happens after something is flagged: severity, evidence to clear, carry-forward."""
+    st.header("Exceptions register & close review")
+    st.caption(
+        "Flags from reconciliation and rules A1-A7 are kept in a register. Each has a severity (blocks close or warns) and "
+        "needs a named reviewer, a reason code and an evidence note to clear. Unresolved items carry into later periods "
+        "with their age. Severity defaults are starting points to agree with whoever owns the close, not accounting policy. "
+        "On a hosted deployment the register is temporary storage and resets when the app restarts."
+    )
+    dataset_label = st.selectbox("Dataset", ["Synthetic (5,000 bank transactions)", "Xero", "QuickBooks"])
+    dataset, conn = {
+        "Synthetic (5,000 bank transactions)": ("synthetic", lambda: sqlite3.connect(LARGE_DB_PATH)),
+        "Xero": ("xero", lambda: _connect(DB_PATH, DEMO_DB_PATH)),
+        "QuickBooks": ("quickbooks", lambda: _connect(QB_DB_PATH, QB_DEMO_DB_PATH)),
+    }[dataset_label]
+    ledger_conn = conn()
+    recon_report = build_reconciliation_report(match_bank_transactions(ledger_conn))
+    detected = detect_all(ledger_conn, recon_report) + register.recon_review_exceptions(recon_report)
+    ledger_conn.close()
+
+    periods = sorted({(d.get("date") or "")[:7] for d in detected if d.get("date")})
+    if not periods:
+        st.info("Nothing flagged for this dataset.")
+        return
+    close_period = st.selectbox("Close period", periods, index=len(periods) - 1)
+
+    reg = register.connect()
+    result = register.sync(reg, dataset, close_period, detected)
+    status = register.close_status(reg, dataset, close_period)
+
+    (st.success if status["can_close"] else st.error)(
+        f"{close_period} can be closed." if status["can_close"]
+        else f"{close_period} cannot be closed: {status['blocking_open']} blocking exception(s) still open."
+    )
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Blocking, open", status["blocking_open"])
+    col2.metric("Warnings, open", status["warnings_open"])
+    col3.metric("Carried from earlier periods", status["carried_forward"])
+    col4.metric("Oldest item (months)", status["oldest_age_months"])
+    if result["no_longer_detected"]:
+        st.caption(f"{result['no_longer_detected']} registered item(s) are no longer detected by the engine; they stay in the register until a reviewer clears them.")
+
+    items = register.open_items(reg, dataset, close_period)
+    st.subheader("Open exceptions")
+    st.dataframe(
+        [
+            {"key": i["exception_key"], "severity": i["severity"], "type": i["rule_name"], "contact": i["contact_name"],
+             "amount": i["amount"], "period": i["period"], "age (months)": i["age_months"], "evidence needed": i["required_evidence"]}
+            for i in sorted(items, key=lambda i: (i["severity"] != "blocks_close", -i["age_months"]))
+        ],
+        use_container_width=True,
+    )
+
+    if items:
+        st.subheader("Clear an exception")
+        with st.form("clear_exception", clear_on_submit=True):
+            key = st.selectbox("Exception", [i["exception_key"] for i in items])
+            reviewer = st.text_input("Reviewer (name)")
+            reason_code = st.selectbox("Reason", register.REASON_CODES)
+            note = st.text_area("Evidence (what you checked, and where the document is)")
+            if st.form_submit_button("Clear"):
+                try:
+                    register.clear(reg, key, reviewer, reason_code, note)
+                    st.rerun()
+                except ValueError as e:
+                    st.error(str(e))
+
+    cleared = reg.execute(
+        "SELECT exception_key, reviewer, reason_code, evidence_note, cleared_at FROM exceptions WHERE dataset = ? AND status = 'cleared' ORDER BY cleared_at DESC",
+        (dataset,),
+    ).fetchall()
+    if cleared:
+        st.subheader("Cleared (review trail)")
+        st.dataframe([dict(r) for r in cleared], use_container_width=True)
+    reg.close()
+
+
+if view.startswith("Exceptions"):
+    render_close_review()
+    st.stop()
 
 if view.startswith("Synthetic"):
     st.info(
