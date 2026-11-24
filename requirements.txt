@@ -1,6 +1,6 @@
-python-dotenv
-requests
-requests-oauthlib
-pandas
-scikit-learn
-streamlit
+python-dotenv==1.2.4
+requests==2.34.2
+requests-oauthlib==2.0.0
+pandas==3.1.1
+scikit-learn==1.9.1
+streamlit==1.67.0
